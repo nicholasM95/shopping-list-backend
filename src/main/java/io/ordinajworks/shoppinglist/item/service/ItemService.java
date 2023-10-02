@@ -5,7 +5,9 @@ import io.ordinajworks.shoppinglist.item.model.Item;
 import io.ordinajworks.shoppinglist.item.repository.ItemRepository;
 import io.ordinajworks.shoppinglist.item.resource.request.ItemRequestResource;
 import io.ordinajworks.shoppinglist.item.resource.response.ItemResponseResource;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +38,8 @@ public class ItemService {
         return new ItemResponseResource(item.getId(), 0, item.getName(), item.getAmount());
     }
 
+    //@PreAuthorize("hasRole('ROLE_DEV')")
+    @RolesAllowed({"ROLE_DEV"})
     public List<ItemResponseResource> getItems() {
         log.info("Get all items");
         AtomicInteger i = new AtomicInteger(1);

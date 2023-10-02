@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-//import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -29,10 +30,11 @@ public class ItemWebControllerIntegrationTest {
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                //.apply(springSecurity())
+                .apply(springSecurity())
                 .build();
     }
 
+    @WithMockUser(roles = {"ADMIN", "DEV"})
     @Test
     public void addItem() throws Exception {
         var resource = """
@@ -53,6 +55,7 @@ public class ItemWebControllerIntegrationTest {
                 .andExpect(jsonPath("$.amount").value(2));
     }
 
+    @WithMockUser(roles = {"ADMIN", "DEV"})
     @Test
     public void addItemBigName() throws Exception {
         var resource = """
@@ -73,6 +76,7 @@ public class ItemWebControllerIntegrationTest {
                 .andExpect(jsonPath("$.amount").value(2));
     }
 
+    @WithMockUser(roles = {"ADMIN", "DEV"})
     @Test
     public void getItemById() throws Exception {
         mockMvc.perform(get("/item/c570dada-e134-44ad-84ef-a2e18d9c9f2d")
@@ -84,6 +88,7 @@ public class ItemWebControllerIntegrationTest {
                 .andExpect(jsonPath("$.amount").value(1));
     }
 
+    @WithMockUser(roles = {"ADMIN", "DEV"})
     @Test
     public void getItemByIdNotFound() throws Exception {
         mockMvc.perform(get("/item/3a93fe55-27e9-4836-ba84-08be67cd4996")
@@ -91,6 +96,7 @@ public class ItemWebControllerIntegrationTest {
                 .andExpect(status().isNotFound());
     }
 
+    @WithMockUser(roles = {"ADMIN", "DEV"})
     @Test
     public void getItem() throws Exception {
         mockMvc.perform(get("/item")
